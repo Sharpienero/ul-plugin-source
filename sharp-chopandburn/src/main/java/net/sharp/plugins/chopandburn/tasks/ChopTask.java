@@ -9,13 +9,7 @@ import java.util.Comparator;
 public class ChopTask extends ChopAndBurnTask {
     @Override
     public boolean validate() {
-        boolean isTeakAlive = teakAlive();
-        boolean isInventoryFull = Inventory.isFull();
-        boolean doBurnInventory = this.burnInventory;
-
-        boolean isTest = isTeakAlive || isInventoryFull || doBurnInventory;
-
-        return teakAlive() && this.burnInventory == false && Inventory.isFull() == false;
+        return teakAlive() && !this.burnInventory && !Inventory.isFull();
     }
 
     @Override

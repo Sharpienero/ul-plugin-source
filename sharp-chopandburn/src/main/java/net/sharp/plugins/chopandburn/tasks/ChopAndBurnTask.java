@@ -37,6 +37,7 @@ public class ChopAndBurnTask implements Task {
     }
 
     boolean burnInventory = false;
+    boolean findLine = false;
 
     public List<WorldPoint> listOfBurnSpots() {
         List<WorldPoint> list = Arrays.asList(

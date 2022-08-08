@@ -19,9 +19,13 @@ public class BurnTask extends ChopAndBurnTask {
         var hasLogs = Inventory.getFirst(ItemID.TEAK_LOGS);
 
         //Check to see if the inventory is full. Set a val in parent task to override bottom
-        if (Inventory.isFull() && Inventory.contains(ItemID.TEAK_LOGS)) {
+        if (Inventory.isFull() && Inventory.contains(ItemID.TEAK_LOGS))
+        {
             this.burnInventory = true;
-        } else {
+        }
+
+        if (!Inventory.isFull() && !Inventory.contains(ItemID.TEAK_LOGS))
+        {
             this.burnInventory = false;
         }
 
@@ -51,12 +55,12 @@ public class BurnTask extends ChopAndBurnTask {
             builtAreas.add(worldArea);
         }
 
-//        //use startPoints as the filter for figuring out where we should start firemaking from
-//        var validBurnStartSpot = TileObjects
-//                .getSurrounding(Players.getLocal().getWorldLocation(), 15, "Teak")
-//                .stream()
-//                .min(Comparator.comparing(x -> x.equals(startPoints.contains(x))))
-//                .orElse(null);
+        //use startPoints as the filter for figuring out where we should start firemaking from
+        var validBurnStartSpot = TileObjects
+                .getSurrounding(Players.getLocal().getWorldLocation(), 15, "Teak")
+                .stream()
+                .min(Comparator.comparing(x -> x.equals(startPoints.contains(x))))
+                .orElse(null);
 
         List<TileObject> fires = TileObjects.getAll(ObjectID.FIRE_26185);
         var seCornerCounter = 0;
@@ -64,7 +68,7 @@ public class BurnTask extends ChopAndBurnTask {
         for (WorldPoint wp : startPoints)
         {
              if (fires.stream().anyMatch(x -> x.getWorldLocation().equals(wp))) {
-                 //if there's a fire ona  starting point, this is bad.
+                 //if there's a fire on a starting point, this is bad.
                  //therefore we cannot make a fire here. Remove it from startPoints
                  startPoints.remove(seCornerCounter);
                  endPoints.remove(nwCornerCounter);
