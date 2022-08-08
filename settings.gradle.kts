@@ -26,6 +26,7 @@
 rootProject.name = "sharp-plugins"
 
 include("sharp-castle-burner")
+include("sharp-chopandburn")
 
 for (project in rootProject.children) {
     project.apply {
