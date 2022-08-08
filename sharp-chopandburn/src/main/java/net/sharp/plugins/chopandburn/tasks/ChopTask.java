@@ -1,6 +1,9 @@
 package net.sharp.plugins.chopandburn.tasks;
 
+import com.google.inject.Provides;
+import net.runelite.client.config.ConfigManager;
 import net.sharp.plugins.chopandburn.ChopAndBurnConfig;
+import net.sharp.plugins.chopandburn.framework.ChopAndBurnTask;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.entities.TileObjects;
 import net.unethicalite.api.items.Inventory;
@@ -12,9 +15,14 @@ public class ChopTask extends ChopAndBurnTask {
 
     @Inject
     private ChopAndBurnConfig config;
+    @Provides
+    ChopAndBurnConfig provideConfig(ConfigManager configManager)
+    {
+        return configManager.getConfig(ChopAndBurnConfig.class);
+    }
     @Override
     public boolean validate() {
-        return treeAlive() && !this.burnInventory && !Inventory.isFull();
+        return this.isTreeAlive() && !this.isShouldBurnInventory() && !Inventory.isFull();
     }
 
     @Override

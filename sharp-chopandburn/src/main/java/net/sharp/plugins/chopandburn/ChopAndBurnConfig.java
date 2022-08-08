@@ -16,7 +16,7 @@ public interface ChopAndBurnConfig extends Config
     )
     default Tree tree()
     {
-        return Tree.REGULAR;
+        return Tree.TEAK;
     }
 
     @ConfigItem(

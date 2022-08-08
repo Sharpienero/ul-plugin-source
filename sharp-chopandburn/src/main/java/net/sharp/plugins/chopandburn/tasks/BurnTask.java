@@ -4,19 +4,16 @@ import net.runelite.api.ObjectID;
 import net.runelite.api.TileObject;
 import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
-import net.sharp.plugins.chopandburn.ChopAndBurnConfig;
+import net.sharp.plugins.chopandburn.framework.ChopAndBurnTask;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.entities.TileObjects;
 import net.unethicalite.api.items.Inventory;
 import net.unethicalite.api.movement.Movement;
 
-import javax.inject.Inject;
 import java.util.*;
 
 public class BurnTask extends ChopAndBurnTask {
 
-    @Inject
-    private ChopAndBurnConfig config;
     @Override
     public boolean validate() {
         var tinderbox = Inventory.getFirst("Tinderbox");
@@ -25,16 +22,16 @@ public class BurnTask extends ChopAndBurnTask {
         //Check to see if the inventory is full. Set a val in parent task to override bottom
         if (Inventory.isFull() && hasLogs != null)
         {
-            this.burnInventory = true;
+            setShouldBurnInventory(true);
         }
 
         if (!Inventory.isFull() && hasLogs != null)
         {
-            this.burnInventory = false;
+            setShouldBurnInventory(false);
         }
 
         //if we have a tinderbox, there's a log nearby, and the teak is dead
-        if (this.burnInventory || (tinderbox != null && hasLogs != null && !this.treeAlive())) {
+        if (isShouldBurnInventory() || (tinderbox != null && hasLogs != null && this.isTreeAlive())) {
             return true;
         }
 
@@ -61,7 +58,7 @@ public class BurnTask extends ChopAndBurnTask {
 
         //use startPoints as the filter for figuring out where we should start firemaking from
         var validBurnStartSpot = TileObjects
-                .getSurrounding(Players.getLocal().getWorldLocation(), 15, config.tree().getName())
+                .getSurrounding(Players.getLocal().getWorldLocation(), 15, this.getConfig().tree().getName())
                 .stream()
                 .min(Comparator.comparing(x -> x.equals(startPoints.contains(x))))
                 .orElse(null);

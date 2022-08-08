@@ -1,8 +1,10 @@
-package net.sharp.plugins.chopandburn.tasks;
+package net.sharp.plugins.chopandburn.framework;
 
+import com.google.inject.Provides;
 import lombok.Getter;
 import lombok.Setter;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.client.config.ConfigManager;
 import net.sharp.plugins.chopandburn.ChopAndBurnConfig;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.entities.TileObjects;
@@ -19,6 +21,13 @@ public class ChopAndBurnTask implements Task {
 
     @Inject
     private ChopAndBurnConfig config;
+    @Provides
+    ChopAndBurnConfig provideConfig(ConfigManager configManager)
+    {
+        return configManager.getConfig(ChopAndBurnConfig.class);
+    }
+
+
     @Override
     public boolean validate() {
         return false;
@@ -29,20 +38,23 @@ public class ChopAndBurnTask implements Task {
         return 0;
     }
 
-    public boolean treeAlive() {
+    public boolean isTreeAlive() {
         var tree = TileObjects
                 .getSurrounding(Players.getLocal().getWorldLocation(), 15, config.tree().getName())
                 .stream()
                 .min(Comparator.comparing(x -> x.distanceTo(Players.getLocal().getWorldLocation())))
                 .orElse(null);
 
-        if (tree != null) return true;
-
-        return false;
+        return tree != null;
     }
 
-    boolean burnInventory = false;
-    boolean findLine = false;
+    @Getter
+    @Setter
+    boolean shouldBurnInventory = false;
+
+    @Getter
+    @Setter
+    boolean shouldFindLine = false;
 
     public List<WorldPoint> listOfBurnSpots() {
         List<WorldPoint> list = Arrays.asList(
