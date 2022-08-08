@@ -3,12 +3,9 @@ package net.sharp.plugins.chopandburn;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.sharp.plugins.chopandburn.tasks.*;
-import net.unethicalite.api.movement.pathfinder.GlobalCollisionMap;
 import net.unethicalite.api.plugins.Task;
 import net.unethicalite.api.plugins.TaskPlugin;
 import org.pf4j.Extension;
-
-import javax.inject.Inject;
 
 @Extension
 @PluginDescriptor(
@@ -18,9 +15,6 @@ import javax.inject.Inject;
 )
 @Slf4j
 public class ChopAndBurnPlugin extends TaskPlugin {
-    @Inject
-    private GlobalCollisionMap collisionMap;
-
     private final Task[] tasks = new Task[]
             {
                     new ChopTask(),
