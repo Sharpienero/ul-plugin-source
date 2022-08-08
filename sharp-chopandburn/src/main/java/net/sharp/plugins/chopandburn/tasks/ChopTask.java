@@ -1,19 +1,25 @@
 package net.sharp.plugins.chopandburn.tasks;
 
+import net.sharp.plugins.chopandburn.ChopAndBurnConfig;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.entities.TileObjects;
 import net.unethicalite.api.items.Inventory;
 
+import javax.inject.Inject;
 import java.util.Comparator;
 
 public class ChopTask extends ChopAndBurnTask {
+
+    @Inject
+    private ChopAndBurnConfig config;
     @Override
     public boolean validate() {
-        return teakAlive() && !this.burnInventory && !Inventory.isFull();
+        return treeAlive() && !this.burnInventory && !Inventory.isFull();
     }
 
     @Override
     public int execute() {
+
 
         if (Players.getLocal().isAnimating())
         {
@@ -26,7 +32,7 @@ public class ChopTask extends ChopAndBurnTask {
         }
 
         var tree = TileObjects
-                .getSurrounding(Players.getLocal().getWorldLocation(), 15, "Teak")
+                .getSurrounding(Players.getLocal().getWorldLocation(), 15, config.tree().getName())
                 .stream()
                 .min(Comparator.comparing(x -> x.distanceTo(Players.getLocal().getWorldLocation())))
                 .orElse(null);
@@ -39,7 +45,7 @@ public class ChopTask extends ChopAndBurnTask {
 
         if (tree != null)
         {
-            tree.interact("Chop down");
+            tree.interact(x -> x.contains("Chop"));
         }
 
         return 1000;
