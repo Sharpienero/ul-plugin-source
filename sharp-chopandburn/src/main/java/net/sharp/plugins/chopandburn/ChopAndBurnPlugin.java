@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.sharp.plugins.chopandburn.tasks.BurnTask;
 import net.sharp.plugins.chopandburn.tasks.ChopTask;
 import net.unethicalite.api.plugins.Task;
 import net.unethicalite.api.plugins.TaskPlugin;
@@ -17,7 +18,8 @@ public class ChopAndBurnPlugin extends TaskPlugin {
 
     private final Task[] tasks = new Task[]
             {
-                    new ChopTask()
+                    new ChopTask(),
+                    new BurnTask()
             };
 
     @Override
