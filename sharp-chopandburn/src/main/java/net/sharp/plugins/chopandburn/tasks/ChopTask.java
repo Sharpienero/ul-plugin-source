@@ -1,25 +1,13 @@
 package net.sharp.plugins.chopandburn.tasks;
 
-import com.google.inject.Provides;
-import net.runelite.client.config.ConfigManager;
-import net.sharp.plugins.chopandburn.ChopAndBurnConfig;
 import net.sharp.plugins.chopandburn.framework.ChopAndBurnTask;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.entities.TileObjects;
 import net.unethicalite.api.items.Inventory;
 
-import javax.inject.Inject;
 import java.util.Comparator;
 
 public class ChopTask extends ChopAndBurnTask {
-
-    @Inject
-    private ChopAndBurnConfig config;
-    @Provides
-    ChopAndBurnConfig provideConfig(ConfigManager configManager)
-    {
-        return configManager.getConfig(ChopAndBurnConfig.class);
-    }
     @Override
     public boolean validate() {
         return this.isTreeAlive() && !this.isShouldBurnInventory() && !Inventory.isFull();
@@ -40,7 +28,7 @@ public class ChopTask extends ChopAndBurnTask {
         }
 
         var tree = TileObjects
-                .getSurrounding(Players.getLocal().getWorldLocation(), 15, config.tree().getName())
+                .getSurrounding(Players.getLocal().getWorldLocation(), 15, "Teak")
                 .stream()
                 .min(Comparator.comparing(x -> x.distanceTo(Players.getLocal().getWorldLocation())))
                 .orElse(null);

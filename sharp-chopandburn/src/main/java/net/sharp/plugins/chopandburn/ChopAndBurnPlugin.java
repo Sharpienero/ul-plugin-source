@@ -1,8 +1,6 @@
 package net.sharp.plugins.chopandburn;
 
-import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.sharp.plugins.chopandburn.tasks.*;
 import net.unethicalite.api.movement.pathfinder.GlobalCollisionMap;
@@ -20,15 +18,6 @@ import javax.inject.Inject;
 )
 @Slf4j
 public class ChopAndBurnPlugin extends TaskPlugin {
-
-    @Inject
-    private ChopAndBurnConfig config;
-    @Provides
-    ChopAndBurnConfig provideConfig(ConfigManager configManager)
-    {
-        return configManager.getConfig(ChopAndBurnConfig.class);
-    }
-
     @Inject
     private GlobalCollisionMap collisionMap;
 

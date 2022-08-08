@@ -58,7 +58,7 @@ public class BurnTask extends ChopAndBurnTask {
 
         //use startPoints as the filter for figuring out where we should start firemaking from
         var validBurnStartSpot = TileObjects
-                .getSurrounding(Players.getLocal().getWorldLocation(), 15, this.getConfig().tree().getName())
+                .getSurrounding(Players.getLocal().getWorldLocation(), 15, "Teak")
                 .stream()
                 .min(Comparator.comparing(x -> x.equals(startPoints.contains(x))))
                 .orElse(null);
