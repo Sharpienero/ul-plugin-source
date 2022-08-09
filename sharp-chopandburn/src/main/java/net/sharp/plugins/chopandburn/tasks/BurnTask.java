@@ -1,9 +1,15 @@
 package net.sharp.plugins.chopandburn.tasks;
 
+import net.runelite.api.ObjectID;
+import net.runelite.api.TileObject;
+import net.runelite.api.coords.WorldPoint;
 import net.sharp.plugins.chopandburn.framework.ChopAndBurnTask;
 import net.unethicalite.api.entities.Players;
+import net.unethicalite.api.entities.TileObjects;
 import net.unethicalite.api.items.Inventory;
+import net.unethicalite.api.movement.Movement;
 
+import java.util.List;
 import java.util.Locale;
 
 public class BurnTask extends ChopAndBurnTask {
@@ -13,19 +19,13 @@ public class BurnTask extends ChopAndBurnTask {
         var tinderbox = Inventory.getFirst("Tinderbox");
         var hasLogs = Inventory.getFirst(x -> x.getName().toLowerCase(Locale.ROOT).contains("logs"));
 
-        //Check to see if the inventory is full. Set a val in parent task to override bottom
-        if (Inventory.isFull() && hasLogs != null)
+        if (Inventory.isFull())
         {
             setShouldBurnInventory(true);
         }
 
-        if (!Inventory.isFull() && hasLogs != null)
-        {
-            setShouldBurnInventory(false);
-        }
-
-        //if we have a tinderbox, there's a log nearby, and the teak is dead
-        if (isShouldBurnInventory() || (tinderbox != null && hasLogs != null && this.isTreeAlive())) {
+        //if we have a tinderbox, there's a log nearby, and the inventory is full OR we should burn inventory
+        if (((tinderbox != null && hasLogs != null) && Inventory.isFull()) || isShouldBurnInventory()) {
             return true;
         }
 
@@ -33,68 +33,53 @@ public class BurnTask extends ChopAndBurnTask {
     }
 
     public int execute() {
+        //Move to first burn spot
+        var startPoint = new WorldPoint(2644, 3251, 0);
+        var startPointTwo = new WorldPoint(2641, 3252, 0);
 
-        if (Players.getLocal().isAnimating() || Players.getLocal().isAnimating()) return 500;
+        var endPoint = new WorldPoint(2630, 3251, 0);
+        var endPointTwo = new WorldPoint(2636, 3252, 0);
 
-//        //Find start of each path
-//        var points = this.listOfBurnSpots();
-//        List<WorldPoint> startPoints = Arrays.asList(points.get(4), points.get(5), points.get(6), points.get(7));
-//        List<WorldPoint> endPoints = Arrays.asList(points.get(0), points.get(1), points.get(2), points.get(3));
-//        ArrayList<WorldArea> builtAreas = new ArrayList<>(startPoints.size());
-//
-//        //iterate over both lists simultaneously
-//        Iterator<WorldPoint> i1 = startPoints.iterator();
-//        Iterator<WorldPoint> i2 = endPoints.iterator();
-//        while (i1.hasNext() && i2.hasNext()) {
-//            var worldArea = new WorldArea(i1.next(), i2.next());
-//            builtAreas.add(worldArea);
-//        }
-//
-//        //use startPoints as the filter for figuring out where we should start firemaking from
-//        var validBurnStartSpot = TileObjects
-//                .getSurrounding(Players.getLocal().getWorldLocation(), 15, "Teak")
-//                .stream()
-//                .min(Comparator.comparing(x -> x.equals(startPoints.contains(x))))
-//                .orElse(null);
-//
-//        List<TileObject> fires = TileObjects.getAll(ObjectID.FIRE_26185);
-//        var seCornerCounter = 0;
-//        var nwCornerCounter = 3;
-//        for (WorldPoint wp : startPoints)
-//        {
-//             if (fires.stream().anyMatch(x -> x.getWorldLocation().equals(wp))) {
-//                 //if there's a fire on a starting point, this is bad.
-//                 //therefore we cannot make a fire here. Remove it from startPoints
-//                 startPoints.remove(seCornerCounter);
-//                 endPoints.remove(nwCornerCounter);
-//             }
-//            nwCornerCounter++;
-//            seCornerCounter++;
-//        }
-//
-//        if (fires.stream().anyMatch(x -> x.getWorldLocation().equals(startPoints))) {
-//            // if there's a fire on any of the start tiles, we have to just wait until the fires despawn
-//            return 1000;
-//        }
-//
-//        if (validBurnStartSpot != null)
-//        {
-//            if (!Players.getLocal().getWorldLocation().equals(validBurnStartSpot))
-//            {
-//                Movement.walkTo(validBurnStartSpot.getWorldLocation());
-//            }
-//        }
-
-
-        var longestArea = this.getLongestWorldArea();
-        var tinderbox = Inventory.getFirst("Tinderbox");
-        if (tinderbox != null)
+        WorldPoint usePoint = startPoint;
+        List<TileObject> fires = TileObjects.getAll(ObjectID.FIRE_26185);
+        if (!fires.stream().anyMatch(x -> !x.getWorldLocation().equals(startPoint) && !x.getWorldLocation().equals(endPoint)))
         {
-            var logs = Inventory.getFirst(x -> x.getName().toLowerCase(Locale.ROOT).contains("logs"));
-            if (logs != null)
+            usePoint = startPoint;
+            if (!fires.stream().anyMatch(x -> x.getWorldLocation().equals(startPointTwo) && !x.getWorldLocation().equals(endPointTwo)))
             {
-                tinderbox.useOn(logs);
-                return 333;
+                usePoint = startPointTwo;
+            }
+        }
+
+        //if we're not on the starting point, we should be
+        if (!Players.getLocal().getWorldLocation().equals(usePoint) && Inventory.getCount(x -> x.getName().toLowerCase(Locale.ROOT).contains("logs")) == 20 || Inventory.getCount(x -> x.getName().toLowerCase(Locale.ROOT).contains("logs")) == 5)
+        {
+            // walk to it
+            Movement.walkTo(usePoint);
+        }
+
+        // if we're on the world point, we should
+        if (Players.getLocal().getWorldLocation().equals(usePoint))
+        {
+            //burn the inventory
+            setShouldBurnInventory(true);
+        }
+
+        if (isShouldBurnInventory() && !Players.getLocal().isAnimating() && !Players.getLocal().isMoving()) {
+            var tinderbox = Inventory.getFirst("Tinderbox");
+            if (tinderbox != null)
+            {
+                var logs = Inventory.getFirst(x -> x.getName().toLowerCase(Locale.ROOT).contains("logs"));
+                if (logs != null)
+                {
+                    tinderbox.useOn(logs);
+                    return 333;
+                }
+                else
+                {
+                    // go back to chopping
+                    setShouldBurnInventory(false);
+                }
             }
         }
 

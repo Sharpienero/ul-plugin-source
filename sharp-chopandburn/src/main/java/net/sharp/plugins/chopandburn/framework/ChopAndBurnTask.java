@@ -31,7 +31,7 @@ public class ChopAndBurnTask implements Task {
 
     public boolean isTreeAlive() {
         var tree = TileObjects
-                .getSurrounding(Players.getLocal().getWorldLocation(), 15, "Teak")
+                .getSurrounding(Players.getLocal().getWorldLocation(), 15, "Oak") //"Oak"
                 .stream()
                 .min(Comparator.comparing(x -> x.distanceTo(Players.getLocal().getWorldLocation())))
                 .orElse(null);

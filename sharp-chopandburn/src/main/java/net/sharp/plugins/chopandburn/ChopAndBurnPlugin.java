@@ -19,9 +19,9 @@ public class ChopAndBurnPlugin extends TaskPlugin {
             {
                     new ChopTask(),
                     new BurnTask(),
-                    new SetFindLineTask(),
-                    new ResetFindLineTask(),
-                    new FindBurnLine(),
+//                    new SetFindLineTask(),
+//                    new ResetFindLineTask(),
+//                    new FindBurnLine(),
             };
 
     @Override

@@ -10,13 +10,17 @@ import java.util.Comparator;
 public class ChopTask extends ChopAndBurnTask {
     @Override
     public boolean validate() {
-        return this.isTreeAlive() && !this.isShouldBurnInventory() && !Inventory.isFull();
+        var shouldBurn = this.isShouldBurnInventory();
+        var ita = this.isTreeAlive();
+        var iif = Inventory.isFull();
+
+        var allTrue = this.isShouldBurnInventory() && this.isTreeAlive() && !iif;
+
+        return ita && shouldBurn == false && !Inventory.isFull();
     }
 
     @Override
     public int execute() {
-
-
         if (Players.getLocal().isAnimating())
         {
             return 1000;
@@ -28,7 +32,7 @@ public class ChopTask extends ChopAndBurnTask {
         }
 
         var tree = TileObjects
-                .getSurrounding(Players.getLocal().getWorldLocation(), 15, "Teak")
+                .getSurrounding(Players.getLocal().getWorldLocation(), 15, "Oak")
                 .stream()
                 .min(Comparator.comparing(x -> x.distanceTo(Players.getLocal().getWorldLocation())))
                 .orElse(null);
